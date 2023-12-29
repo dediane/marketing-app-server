@@ -15,15 +15,16 @@ export class AuthService {
     const user = await this.userService.findOneByEmail(email);
     if (user && await bcrypt.compare(user.password, password)) {
       const { password, ...result } = user;
-      return result;
+      return {status: true, user: result};
     }
-    return null;
+    return {status: false, message: 'Invalid credentials'};
   }
 
   async login(user: any) {
       const payload = { email: user.email, sub: user.id };
       return {
           access_token: this.jwtService.sign(payload),
+          status: true,
       };
   }
 
